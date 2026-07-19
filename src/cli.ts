@@ -6,12 +6,12 @@ import type { CheckIssue } from './types.js';
 
 const VERSION = '0.1.0';
 
-const HELP = `llms-txt-gen — generate and check llms.txt files
+const HELP = `llms-txt-doctor — check and generate llms.txt files
 
 Usage:
-  llms-txt-gen generate <url> [options]   Generate llms.txt for a site
-  llms-txt-gen check <url> [options]      Check a site's existing llms.txt
-  llms-txt-gen <url>                      Shorthand for generate
+  llms-txt-doctor check <url> [options]      Check a site's existing llms.txt
+  llms-txt-doctor generate <url> [options]   Generate llms.txt for a site
+  llms-txt-doctor <url>                      Shorthand for check
 
 Generate options:
   --out <file>          Output path (default: llms.txt; "-" for stdout)
@@ -32,8 +32,8 @@ Common:
   -v, --version         Show version
 
 Examples:
-  npx llms-txt-gen generate example.com
-  npx llms-txt-gen check example.com
+  npx llms-txt-doctor generate example.com
+  npx llms-txt-doctor check example.com
 `;
 
 const VALUE_FLAGS = new Set([
@@ -128,10 +128,10 @@ async function main(): Promise<void> {
   let url = positional[1];
   if (command !== 'generate' && command !== 'check') {
     url = command;
-    command = 'generate';
+    command = 'check';
   }
   if (!url) {
-    console.error('Missing <url>. See llms-txt-gen --help');
+    console.error('Missing <url>. See llms-txt-doctor --help');
     process.exit(1);
   }
 
@@ -155,7 +155,7 @@ async function main(): Promise<void> {
       log(
         `Wrote ${out}: ${result.pageCount} pages in ${result.sectionCount} sections (${result.usedSitemap ? 'from sitemap' : 'crawled from homepage'})`,
       );
-      log(`Next: deploy it at /llms.txt, then run \`llms-txt-gen check <url>\``);
+      log(`Next: deploy it at /llms.txt, then run \`llms-txt-doctor check <url>\``);
     }
     return;
   }
@@ -174,7 +174,7 @@ async function main(): Promise<void> {
     if (fails === 0 && warns === 0) console.log('  All checks passed.');
     else console.log(`  ${fails} failed, ${warns} warning(s)`);
     if (!result.found) {
-      console.log(`  Generate one: npx llms-txt-gen generate ${result.siteUrl}`);
+      console.log(`  Generate one: npx llms-txt-doctor generate ${result.siteUrl}`);
     }
   }
   if (result.issues.some((i) => i.level === 'fail')) process.exitCode = 1;

@@ -1,6 +1,6 @@
 import { parseSitemap } from './extract.js';
 
-const USER_AGENT = 'llms-txt-gen/0.1 (+https://github.com/billyhetech/llms-txt-gen)';
+const USER_AGENT = 'llms-txt-doctor/0.1 (+https://github.com/billyhetech/llms-txt-doctor)';
 
 export interface RawResponse {
   status: number;

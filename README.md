@@ -1,14 +1,14 @@
-# llms-txt-gen
+# llms-txt-doctor
 
-Generate **and check** [llms.txt](https://llmstxt.org/) files. One command, zero
-config, zero dependencies, no API keys.
+Diagnose **and generate** [llms.txt](https://llmstxt.org/) files. One command,
+zero config, zero dependencies, no API keys.
 
 ```bash
-# Generate llms.txt for any site
-npx llms-txt-gen generate example.com
+# Check a site's llms.txt — spec lint, dead links, sitemap coverage
+npx llms-txt-doctor check example.com
 
-# Check an existing one — spec lint, dead links, sitemap coverage
-npx llms-txt-gen check example.com
+# No llms.txt, or a broken one? Generate it
+npx llms-txt-doctor generate example.com
 ```
 
 ## Why another llms.txt tool?
@@ -37,9 +37,9 @@ the source of, quick starts, and audits.
 ### `generate <url>`
 
 ```bash
-npx llms-txt-gen generate example.com
-npx llms-txt-gen generate example.com --include /docs --include /blog --max-pages 80
-npx llms-txt-gen generate example.com --out - > llms.txt   # stdout
+npx llms-txt-doctor generate example.com
+npx llms-txt-doctor generate example.com --include /docs --include /blog --max-pages 80
+npx llms-txt-doctor generate example.com --out - > llms.txt   # stdout
 ```
 
 | Option | Default | |
@@ -57,8 +57,8 @@ Discovery order: `robots.txt` `Sitemap:` lines → `/sitemap.xml` /
 ### `check <url>`
 
 ```bash
-npx llms-txt-gen check example.com
-npx llms-txt-gen check example.com --json   # for scripts/CI
+npx llms-txt-doctor check example.com
+npx llms-txt-doctor check example.com --json   # for scripts/CI
 ```
 
 Exit code 1 if any check fails — usable as a CI gate.
@@ -81,7 +81,7 @@ llms.txt check — https://example.com/
 ### Programmatic API
 
 ```ts
-import { generateLlmsTxt, checkSite } from 'llms-txt-gen';
+import { generateLlmsTxt, checkSite } from 'llms-txt-doctor';
 
 const { content } = await generateLlmsTxt({ url: 'https://example.com' });
 const report = await checkSite({ url: 'https://example.com' });

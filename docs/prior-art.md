@@ -53,7 +53,7 @@ sections, markdown links, link liveness, llms-full.txt presence.
 ## What's genuinely missing (our candidate wedges)
 
 1. **generate + check in one zero-dep CLI.** Today generation and validation
-   are separate tools; nothing does `npx llms-txt-gen check` + `generate` with
+   are separate tools; nothing does `npx llms-txt-doctor check` + `generate` with
    zero dependencies and zero API keys.
 2. **Coverage check vs sitemap** — validators check the file in isolation;
    none answer "what % of your site does your llms.txt actually cover, and

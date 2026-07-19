@@ -1,10 +1,10 @@
 {
-  "name": "llms-txt-gen",
+  "name": "llms-txt-doctor",
   "version": "0.1.0",
   "description": "Generate a spec-compliant llms.txt for any website. One command, zero config, zero dependencies.",
   "type": "module",
   "bin": {
-    "llms-txt-gen": "dist/cli.js"
+    "llms-txt-doctor": "dist/cli.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,9 +39,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/billyhetech/llms-txt-gen.git"
+    "url": "https://github.com/billyhetech/llms-txt-doctor.git"
   },
-  "homepage": "https://github.com/billyhetech/llms-txt-gen#readme",
+  "homepage": "https://github.com/billyhetech/llms-txt-doctor#readme",
   "engines": {
     "node": ">=18"
   },
