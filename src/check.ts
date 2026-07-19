@@ -9,6 +9,19 @@ import type {
 } from './types.js';
 
 const LINK_ITEM_RE = /^[-*]\s*\[([^\]]*)\]\(<?([^)\s>]+)>?\)\s*:?\s*(.*)$/;
+// Bare-URL list items ("- https://…"), a real-world variant used by e.g.
+// Cursor's llms.txt. Title falls back to the URL's last path segment.
+const BARE_URL_ITEM_RE = /^[-*]\s*<?(https?:\/\/[^\s>]+)>?\s*(?::\s*(.*))?$/;
+
+function titleFromUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    const last = u.pathname.split('/').filter(Boolean).pop();
+    return last ? decodeURIComponent(last) : u.hostname;
+  } catch {
+    return url;
+  }
+}
 
 /** Parse llms.txt into title / summary / sections / links. Pure. */
 export function parseLlmsTxt(content: string): ParsedLlmsTxt {
@@ -50,6 +63,15 @@ export function parseLlmsTxt(content: string): ParsedLlmsTxt {
         url: (item[2] as string).trim(),
       };
       const description = (item[3] as string).trim();
+      if (description) link.description = description;
+      (currentSection ? currentSection.links : result.looseLinks).push(link);
+      continue;
+    }
+    const bare = line.match(BARE_URL_ITEM_RE);
+    if (bare) {
+      const url = (bare[1] as string).trim();
+      const link: ParsedLink = { title: titleFromUrl(url), url };
+      const description = (bare[2] ?? '').trim();
       if (description) link.description = description;
       (currentSection ? currentSection.links : result.looseLinks).push(link);
     }
@@ -204,6 +226,17 @@ export async function checkSite(options: CheckOptions): Promise<CheckResult> {
   const parsed = parseLlmsTxt(response.text);
   issues.push(...lintStructure(parsed, response.text));
   const links = allLinks(parsed);
+
+  // Advanced practice (Cursor, Vercel, Mintlify docs): links point at .md
+  // mirrors of each page, so models read clean markdown instead of HTML.
+  const mdLinks = links.filter((l) => /\.md$/i.test(l.url.split('?')[0] ?? '')).length;
+  if (links.length > 0 && mdLinks / links.length >= 0.5) {
+    issues.push({
+      id: 'md-mirrors',
+      level: 'info',
+      message: `${mdLinks} of ${links.length} links point to .md markdown mirrors — models get clean markdown`,
+    });
+  }
 
   // Link liveness (sampled)
   let checkedLinks = 0;

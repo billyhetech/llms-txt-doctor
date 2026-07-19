@@ -40,6 +40,15 @@ describe('parseLlmsTxt', () => {
     expect(parsed.looseLinks).toHaveLength(1);
     expect(parsed.sections).toHaveLength(0);
   });
+  it('parses bare-URL list items (Cursor style) with URL-derived titles', () => {
+    const parsed = parseLlmsTxt(
+      '# T\n\n## Docs\n\n- https://a.com/docs/quickstart.md\n- https://a.com/pricing: Plans\n',
+    );
+    const links = parsed.sections[0]?.links ?? [];
+    expect(links).toHaveLength(2);
+    expect(links[0]).toEqual({ title: 'quickstart.md', url: 'https://a.com/docs/quickstart.md' });
+    expect(links[1]?.description).toBe('Plans');
+  });
   it('joins multi-line summaries', () => {
     const parsed = parseLlmsTxt('# T\n\n> line one\n> line two\n');
     expect(parsed.summary).toBe('line one line two');
