@@ -4,7 +4,7 @@ import { checkSite } from './check.js';
 import { generateLlmsTxt } from './generate.js';
 import type { CheckIssue } from './types.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 
 const HELP = `llms-txt-doctor — check and generate llms.txt files
 

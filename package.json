@@ -1,6 +1,6 @@
 {
   "name": "llms-txt-doctor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate a spec-compliant llms.txt for any website. One command, zero config, zero dependencies.",
   "type": "module",
   "bin": {
