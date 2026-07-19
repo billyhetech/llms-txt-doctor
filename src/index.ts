@@ -1,4 +1,4 @@
-export { generateLlmsTxt, normalizeBaseUrl } from './generate.js';
+export { generateLlmsTxt, isNoisePath, normalizeBaseUrl } from './generate.js';
 export {
   allLinks,
   checkSite,
@@ -7,7 +7,7 @@ export {
   normalizeForCoverage,
   parseLlmsTxt,
 } from './check.js';
-export { groupIntoSections, renderLlmsTxt } from './render.js';
+export { groupIntoSections, localeFromSegment, renderLlmsTxt } from './render.js';
 export {
   decodeEntities,
   extractDescription,

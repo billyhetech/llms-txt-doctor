@@ -30,6 +30,8 @@ export interface GenerateOptions {
   include?: string[];
   /** Skip paths starting with one of these prefixes, e.g. ["/legal"]. */
   exclude?: string[];
+  /** Keep noise pages (auth flows, pagination) that are skipped by default. */
+  all?: boolean;
   /** Progress logger. Default: silent. */
   log?: (message: string) => void;
 }

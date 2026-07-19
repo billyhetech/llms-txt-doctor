@@ -21,6 +21,7 @@ Generate options:
   --description <text>  Override the summary line
   --include <prefix>    Only paths with this prefix (repeatable)
   --exclude <prefix>    Skip paths with this prefix (repeatable)
+  --all                 Keep auth/pagination pages skipped by default
 
 Check options:
   --max-links <n>       Max links to probe for liveness (default: 20)
@@ -144,6 +145,7 @@ async function main(): Promise<void> {
       description: flags.get('description') as string | undefined,
       include: flags.get('include') as string[] | undefined,
       exclude: flags.get('exclude') as string[] | undefined,
+      all: flags.has('all'),
       log,
     });
     const out = (flags.get('out') as string | undefined) ?? 'llms.txt';

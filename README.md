@@ -49,10 +49,17 @@ npx llms-txt-doctor generate example.com --out - > llms.txt   # stdout
 | `--concurrency <n>` | 5 | parallel fetches |
 | `--include <prefix>` | — | repeatable path allowlist |
 | `--exclude <prefix>` | — | repeatable path blocklist |
+| `--all` | off | keep auth/pagination pages that are skipped by default |
 | `--title` / `--description` | auto | override header lines |
 
 Discovery order: `robots.txt` `Sitemap:` lines → `/sitemap.xml` /
 `/sitemap_index.xml` (indexes followed) → homepage links. Same-origin only.
+
+Output shaping (all automatic): auth flows and `/page/N` pagination are
+skipped (`--all` keeps them), legal boilerplate lands in the spec's
+`## Optional` section, and localized paths like `/zh/...` collapse into one
+native-named section per language (e.g. `## 中文 (Chinese)`), sorted after the
+default-language sections.
 
 ### `check <url>`
 

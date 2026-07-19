@@ -37,6 +37,14 @@ describe('extractTitle', () => {
     const html = '<title>Pricing | Acme</title>';
     expect(extractTitle(html, 'Acme')).toBe('Pricing');
   });
+  it('strips suffixes where the site name is followed by a tagline', () => {
+    const html = '<title>About | Acme — Track Everything Everywhere</title>';
+    expect(extractTitle(html, 'Acme')).toBe('About');
+  });
+  it('keeps titles whose separators never mention the site name', () => {
+    const html = '<title>Foo | Bar</title>';
+    expect(extractTitle(html, 'Acme')).toBe('Foo | Bar');
+  });
   it('decodes entities and collapses whitespace', () => {
     const html = '<title>  A &amp;\n B </title>';
     expect(extractTitle(html)).toBe('A & B');

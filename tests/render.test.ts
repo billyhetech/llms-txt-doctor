@@ -12,6 +12,31 @@ describe('groupIntoSections', () => {
     expect(sections.map((s) => s.name)).toEqual(['Docs', 'Pages']);
     expect(sections[0]?.entries.map((e) => e.title)).toEqual(['API', 'Intro']);
   });
+  it('collapses locale paths into native-named sections sorted after content', () => {
+    const sections = groupIntoSections([
+      { url: 'https://a.com/zh/pricing', title: '价格' },
+      { url: 'https://a.com/zh', title: '首页' },
+      { url: 'https://a.com/docs/intro', title: 'Intro' },
+      { url: 'https://a.com/pricing', title: 'Pricing' },
+    ]);
+    expect(sections.map((s) => s.name)).toEqual(['Docs', 'Pages', '中文 (Chinese)']);
+    expect(sections[2]?.entries).toHaveLength(2);
+  });
+  it('routes legal boilerplate into Optional, sorted last', () => {
+    const sections = groupIntoSections([
+      { url: 'https://a.com/privacy', title: 'Privacy' },
+      { url: 'https://a.com/terms', title: 'Terms' },
+      { url: 'https://a.com/pricing', title: 'Pricing' },
+    ]);
+    expect(sections.map((s) => s.name)).toEqual(['Pages', 'Optional']);
+    expect(sections[1]?.entries).toHaveLength(2);
+  });
+  it('does not treat non-locale two-letter segments as locales', () => {
+    const sections = groupIntoSections([
+      { url: 'https://a.com/vs/peec', title: 'vs Peec' },
+    ]);
+    expect(sections[0]?.name).toBe('Vs');
+  });
   it('title-cases hyphenated segments', () => {
     const sections = groupIntoSections([
       { url: 'https://a.com/case-studies/x', title: 'X' },

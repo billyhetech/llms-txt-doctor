@@ -21,6 +21,17 @@ function matchesPrefixes(pathname: string, prefixes: string[] | undefined): bool
   return prefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
+/**
+ * Pages that add noise rather than signal for LLMs: auth flows, account
+ * areas, carts, and pagination tails. Skipped by default; `--all` keeps them.
+ */
+const NOISE_PATH_RE =
+  /(?:^|\/)(?:auth|login|logout|register|signin|signup|sign-in|sign-up|account|admin|dashboard|cart|checkout|unsubscribe|404|500)(?:\/|$)|\/page\/\d+\/?$/i;
+
+export function isNoisePath(pathname: string): boolean {
+  return NOISE_PATH_RE.test(pathname);
+}
+
 export async function generateLlmsTxt(options: GenerateOptions): Promise<GenerateResult> {
   const log = options.log ?? (() => {});
   const maxPages = options.maxPages ?? 50;
@@ -57,6 +68,7 @@ export async function generateLlmsTxt(options: GenerateOptions): Promise<Generat
     url.hash = '';
     url.search = '';
     if (url.pathname === '/') continue;
+    if (!options.all && isNoisePath(url.pathname)) continue;
     if (matchesPrefixes(url.pathname, options.exclude)) continue;
     if (options.include && options.include.length > 0 && !matchesPrefixes(url.pathname, options.include)) {
       continue;

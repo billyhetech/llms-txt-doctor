@@ -63,11 +63,18 @@ export function extractTitle(html: string, siteName?: string): string | undefine
     metaContent(html, 'og:title') ?? html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1];
   if (!raw) return undefined;
   let title = cleanText(raw, 120);
-  // Strip trailing " | Site" / " – Site" style suffixes when they just repeat the site name.
+  // Strip "Page | Site — tagline" style suffixes: cut at the first separator
+  // whose remainder mentions the site name (handles taglines after the name).
   if (siteName) {
-    const suffixRe = new RegExp(`\\s*[|\\-–—·:]\\s*${escapeRegExp(siteName)}\\s*$`, 'i');
-    const stripped = title.replace(suffixRe, '').trim();
-    if (stripped) title = stripped;
+    const sepRe = /\s+[|–—·]\s+/g;
+    for (const match of title.matchAll(sepRe)) {
+      const head = title.slice(0, match.index).trim();
+      const tail = title.slice((match.index ?? 0) + match[0].length);
+      if (head && tail.toLowerCase().includes(siteName.toLowerCase())) {
+        title = head;
+        break;
+      }
+    }
   }
   return title || undefined;
 }
