@@ -1,0 +1,55 @@
+{
+  "name": "llms-txt-gen",
+  "version": "0.1.0",
+  "description": "Generate a spec-compliant llms.txt for any website. One command, zero config, zero dependencies.",
+  "type": "module",
+  "bin": {
+    "llms-txt-gen": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts src/index.ts --format esm --dts --clean",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm build && pnpm test"
+  },
+  "keywords": [
+    "llms.txt",
+    "llmstxt",
+    "geo",
+    "ai-search",
+    "generative-engine-optimization",
+    "ai-visibility",
+    "seo",
+    "cli"
+  ],
+  "author": "billyhetech",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/billyhetech/llms-txt-gen.git"
+  },
+  "homepage": "https://github.com/billyhetech/llms-txt-gen#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  }
+}
