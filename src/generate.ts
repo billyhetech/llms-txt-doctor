@@ -32,6 +32,32 @@ export function isNoisePath(pathname: string): boolean {
   return NOISE_PATH_RE.test(pathname);
 }
 
+/**
+ * Drop boilerplate descriptions: the site-wide default meta repeated across
+ * pages (and any description identical to the site summary) says nothing
+ * about the individual page.
+ */
+export function stripBoilerplateDescriptions(
+  entries: PageEntry[],
+  summary: string | undefined,
+): PageEntry[] {
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    if (entry.description) counts.set(entry.description, (counts.get(entry.description) ?? 0) + 1);
+  }
+  const boilerplate = new Set(
+    [...counts]
+      .filter(([, n]) => n >= 3 && n / entries.length >= 0.3)
+      .map(([description]) => description),
+  );
+  if (summary) boilerplate.add(summary);
+  return entries.map((entry) =>
+    entry.description && boilerplate.has(entry.description)
+      ? { url: entry.url, title: entry.title }
+      : entry,
+  );
+}
+
 export async function generateLlmsTxt(options: GenerateOptions): Promise<GenerateResult> {
   const log = options.log ?? (() => {});
   const maxPages = options.maxPages ?? 50;
@@ -94,7 +120,13 @@ export async function generateLlmsTxt(options: GenerateOptions): Promise<Generat
     })
   ).filter((entry): entry is PageEntry => entry !== null);
 
-  const sections = groupIntoSections(entries);
+  if (entries.length === 0 && pageUrls.length > 0) {
+    throw new Error(
+      'Fetched pages but extracted 0 usable entries — the site is likely blocking automated requests (bot protection or JS-only rendering). Generation works best on sites you control.',
+    );
+  }
+
+  const sections = groupIntoSections(stripBoilerplateDescriptions(entries, summary));
   const content = renderLlmsTxt({ title, summary, sections });
 
   return {

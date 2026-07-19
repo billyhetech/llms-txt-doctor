@@ -297,10 +297,23 @@ export async function checkSite(options: CheckOptions): Promise<CheckResult> {
     sitemapUrlCount = sitemapSet.size;
     coveredSitemapUrls = [...sitemapSet].filter((u) => listedSet.has(u)).length;
     coveragePct = sitemapUrlCount > 0 ? Math.round((coveredSitemapUrls / sitemapUrlCount) * 100) : null;
+    // Many docs-style llms.txt files link to another origin (docs.example.com);
+    // coverage against this domain's sitemap then understates by design.
+    const offOrigin = links.filter((l) => {
+      try {
+        return new URL(l.url, base).origin !== base.origin;
+      } catch {
+        return false;
+      }
+    }).length;
+    const offOriginNote =
+      links.length > 0 && offOrigin / links.length >= 0.5
+        ? ' — most links point to another origin, so this understates by design'
+        : '';
     issues.push({
       id: 'coverage',
       level: 'info',
-      message: `Covers ${coveredSitemapUrls} of ${sitemapUrlCount} sitemap URLs (${coveragePct}%)`,
+      message: `Covers ${coveredSitemapUrls} of ${sitemapUrlCount} sitemap URLs (${coveragePct}%)${offOriginNote}`,
     });
     chineseSitemapUrls = sitemapUrls.filter((u) => isChinesePath(u)).length;
   } else {

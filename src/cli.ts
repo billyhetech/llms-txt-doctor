@@ -78,7 +78,7 @@ function parseArgs(argv: string[]): ParsedArgs {
       } else {
         const key = arg.slice(2);
         const next = argv[i + 1];
-        if (VALUE_FLAGS.has(key) && next !== undefined && !next.startsWith('-')) {
+        if (VALUE_FLAGS.has(key) && next !== undefined && (next === '-' || !next.startsWith('-'))) {
           setFlag(key, next);
           i++;
         } else {
